@@ -2,45 +2,23 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
-from matplotlib.lines import Line2D
-from enum import Enum
 from typing import List, Dict
 
 from optiskLederSol import find_effective_refractive_indexes, Mode, system
+from cosmetics import customline, level
 
-example_n1 = 3
-example_n2 = 1
+# For å modifisere output burde i grunnen kun følgende variabler endres på
 
-
-class Directions(Enum):
-    horizontal: int = 0
-    vertical: int = 1
-
-
-def customline(ax: Axes, color="k", linestyle="--", alpha=0.3, **kwargs):
-    if 'x' in kwargs and 'y' in kwargs:
-        raise Exception("Cannot specify both x and y")
-    if 'x' in kwargs:
-        return ax.axvline(x=kwargs.pop('x'), color=color, linestyle=linestyle, alpha=alpha, **kwargs)
-    elif 'y' in kwargs:
-        return ax.axhline(y=kwargs.pop('y'), color=color, linestyle=linestyle, alpha=alpha, **kwargs)
-    else:
-        raise Exception("Cannot specify neither x and y")
+n_1 = 1.9           # (1)       brytnings index for optisk leder
+n_2 = 1.0           # (1)       brytnings index for området rundt den optiske leder
+wavelen = 400e-9    # (meter)   bølgelengde til aktuelle bølger (slik de hadde vært i vakuum)
+b = 220e-9          # (meter)   optisk leder-flate tykkelse
 
 
-def level(ax: Axes, y: float, **kwargs):
-    color = kwargs.pop("color", "teal")
-    linestyle = kwargs.pop("linestyle", ":")
-    alpha = kwargs.pop("alpha", 0.8)
-    linewidth = kwargs.pop("linewidth", 2)
 
-    return customline(ax=ax, color=color,
-                      linewidth=linewidth, linestyle=linestyle, y=y, alpha=alpha)
 
-n_1 = 1.9
-n_2 = 1.0
-wavelen = 400e-9
-b = 220e-9
+
+
 
 elmag_sys = system(n_1, n_2, wavelen, b)
 
