@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
-from typing import List, Dict
+from typing import Dict
 
 from optiskLederSol import find_effective_refractive_indexes, Mode, system
 from cosmetics import customline, level
@@ -66,7 +66,7 @@ if __name__ == '__main__':
     fig.show()
     fig.savefig('eksempelBronn.svg')
 
-    fig, (ax1, ax2) = plt.subplots(1,2, figsize=(10,4))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))
     lw = 1.4
     ls = "-"
     for m in range(len(elmag_sys.TE_N_sols)):
@@ -83,6 +83,6 @@ if __name__ == '__main__':
     customline(ax1, x=b);       customline(ax2, x=b)
     customline(ax1, y=0);       customline(ax2, y=0)
     ax1.set_xticks([0, b]);              ax2.set_xticks([0, b])
-    ax1.set_xticklabels(["0", "b"]);    ax2.set_xticklabels(["0", "b"])
-    ax1.legend();                       ax2.legend()
+    ax1.set_xticklabels(["0", "b"]);     ax2.set_xticklabels(["0", "b"])
+    ax1.legend();                        ax2.legend()
     fig.show()

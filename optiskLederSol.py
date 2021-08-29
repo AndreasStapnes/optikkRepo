@@ -118,17 +118,17 @@ def find_ABCD(n_1: float, n_2: float, wavelen: float, b: float,
                       [0,                     K/n_1**2,            -gamma/n_2**2,  0],
                       [np.cos(Kb),            np.sin(Kb),           0,            -1],
                       [-K*np.sin(Kb)/n_1**2,  K*np.cos(Kb)/n_1**2,  0,             gamma/n_2**2]])
-        #print(qm_matrix)
-        #print(np.linalg.det(qm_matrix))
+        # print(qm_matrix)
+        # print(np.linalg.det(qm_matrix))
         sol = np.array(linalg.null_space(qm_matrix, rcond=1e-8))
         if np.shape(sol)[1] != 1:
             print(sol)
             print(np.shape(sol))
             raise Exception("Something went wrong during search for null-vectors")
-        As.append(sol[0,0])
-        Bs.append(sol[1,0])
-        Cs.append(sol[2,0])
-        Ds.append(sol[3,0])
+        As.append(sol[0, 0])
+        Bs.append(sol[1, 0])
+        Cs.append(sol[2, 0])
+        Ds.append(sol[3, 0])
     return As, Bs, Cs, Ds
 
 
@@ -215,7 +215,7 @@ class system:
             return vals
         return eval
 
-    def getRank(self, m: int) -> Callable[[np.ndarray], ModeSolutionObject]:
+    def getRank(self, m: int) -> Callable[[np.ndarray, Optional[float]], ModeSolutionObject]:
         A, B, C, D = self.AsTE[m], self.BsTE[m], self.CsTE[m], self.DsTE[m]
         gamma, K = self.TE_gamma_sols[m], self.TE_K_sols[m]
         TE_beta = self.TE_beta_sols[m]
@@ -229,7 +229,7 @@ class system:
 
         w = 2*np.pi*c/self.wavelen
 
-        def method(x: np.ndarray):
+        def method(x: np.ndarray, t: Optional[float] = None):
             TE_E = VectorArray(np.zeros_like(x), TE_E_y_method(x), np.zeros_like(x))
             TE_B_x = -TE_beta/w * TE_E.y
             TE_B_y = np.zeros_like(x)
@@ -244,11 +244,13 @@ class system:
             TM_E = VectorArray(TM_E_x, TM_E_y, TM_E_z)
             TM = ElmagTensor(TM_E, TM_B) / np.max(np.abs(TM_B.y))
 
+            if t is not None:
+                TE = TE*np.exp(1j*w*t)
+                TM = TM*np.exp(1j*w*t)
+
             return ModeSolutionObject(TE, TM)
         return method
 
     def __getitem__(self, m: int):
         return self.getRank(m)
-
-
 
