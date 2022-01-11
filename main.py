@@ -4,7 +4,8 @@ from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from typing import Dict
 
-from optiskLederSol import find_effective_refractive_indexes, Mode, system
+from optiskLederSol import find_effective_refractive_indexes, Mode, system, \
+    rhs_basis_TE, lhs_basis, rhs_basis_TM
 from cosmetics import customline, level
 
 # For å modifisere output burde i grunnen kun følgende variabler endres på
@@ -69,20 +70,39 @@ if __name__ == '__main__':
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))
     lw = 1.4
     ls = "-"
+    m_cap = len(elmag_sys.TE_N_sols)
     for m in range(len(elmag_sys.TE_N_sols)):
         TE_E_y = elmag_sys[m](xvals).TE.E.y
         TE_E_y *= np.sign(TE_E_y[0])
         TM_B_y = elmag_sys[m](xvals).TM.B.y
         TM_B_y *= np.sign(TM_B_y[0])
-        ax1.plot(xvals, TE_E_y, color="xkcd:nasty green", linestyle=ls, linewidth=lw)
-        ax2.plot(xvals, TM_B_y, color="xkcd:burple", linestyle=ls, linewidth=lw)
+        ax1.plot(xvals, TE_E_y, color="red", linestyle=ls, linewidth=lw)
+        ax2.plot(xvals, TM_B_y, color="blue", linestyle=ls, linewidth=lw)
 
-    ax1.plot([], [], color="xkcd:nasty green", linestyle=ls, linewidth=lw, label=r"$E_y$ for TE")
-    ax2.plot([], [], color="xkcd:burple", linestyle=ls, linewidth=lw, label=r"$B_y$ for TM")
+    ax1.plot([], [], color="red", linestyle=ls, linewidth=lw, label=r"$E_y$ for TE")
+    ax2.plot([], [], color="blue", linestyle=ls, linewidth=lw, label=r"$B_y$ for TM")
     customline(ax1, x=0);       customline(ax2, x=0)
     customline(ax1, x=b);       customline(ax2, x=b)
     customline(ax1, y=0);       customline(ax2, y=0)
     ax1.set_xticks([0, b]);              ax2.set_xticks([0, b])
     ax1.set_xticklabels(["0", "b"]);     ax2.set_xticklabels(["0", "b"])
     ax1.legend();                        ax2.legend()
+    ax1.set_xlabel("x")
+    ax2.set_xlabel("x")
     fig.show()
+    fig.savefig("eksempelBronnModes.svg")
+
+    fig, ax = plt.subplots(1,1)
+    N = np.linspace(n_2, n_1, 400)
+    ax.plot(N, [lhs_basis(n_1, n_2, wavelen, b, n, 0) for n in N], color="k",
+            label="l.h.s.")
+    for m in range(m_cap):
+        ax.plot(N, [rhs_basis_TE(n_1, n_2, wavelen, b, n, m) for n in N], color="red")
+        ax.plot(N, [rhs_basis_TM(n_1, n_2, wavelen, b, n, m) for n in N], color="blue")
+    ax.plot([],[], color="red", label="TE r.h.s.")
+    ax.plot([], [], color="blue", label="TM r.h.s")
+    ax.legend(loc="lower right")
+    ax.set_xlabel("N")
+    fig.show()
+
+    fig.savefig("modeDispersionGraphical.svg")

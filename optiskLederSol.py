@@ -63,13 +63,13 @@ def lhs_basis(n_1: float, n_2: float, wavelen: float, b: float, N: float, m: int
 
 @njit()
 def rhs_basis_TE(n_1, n_2, wavelen, b, N, m) -> float:
-    if N == n_1: return np.pi
+    if N == n_1: return (m+1)*np.pi
     else: return 2*np.arctan(np.sqrt((N**2-n_2**2)/(n_1**2-N**2))) + m*np.pi
 
 
 @njit()
 def rhs_basis_TM(n_1, n_2, wavelen, b, N, m) -> float:
-    if N == n_1: return np.pi
+    if N == n_1: return (m+1)*np.pi
     else: return 2*np.arctan(n_1**2/n_2**2*np.sqrt((N**2-n_2**2)/(n_1**2-N**2))) + m*np.pi
 
 

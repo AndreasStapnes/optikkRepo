@@ -2,6 +2,10 @@ from enum import Enum
 from typing import List, Callable, NamedTuple
 import numpy as np
 
+def lhs_basis(n_1, n_2, wavelen, b, N, m) -> float: ...
+def rhs_basis_TE(n_1, n_2, wavelen, b, N, m) -> float: ...
+def rhs_basis_TM(n_1, n_2, wavelen, b, N, m) -> float: ...
+
 class Mode(Enum):
     TE: int
     TM: int
